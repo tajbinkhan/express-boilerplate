@@ -1,331 +1,128 @@
-# Express Authentication v2
+# Express Boilerplate
 
-A robust Express.js authentication API with advanced security features, built with TypeScript,
-Drizzle ORM, and comprehensive authentication strategies.
+An opinionated Express boilerplate built with TypeScript, Drizzle ORM, and PostgreSQL.
 
 ## Features
 
-- 🔐 **Multiple Authentication Methods**
-  - Local authentication (email/password)
-  - Google OAuth 2.0 integration
-  - Passport.js integration
-
-- 🛡️ **Security Features**
-  - CSRF protection
-  - Rate limiting
-  - Helmet security headers
-  - Session management
-  - Password hashing with bcrypt
-  - Input validation with Zod
-
-- 📧 **Email Services**
-  - Email verification
-  - Password reset
-  - Template-based emails with Handlebars
-  - Nodemailer integration
-
-- 🗄️ **Database Support**
-  - PostgreSQL with Drizzle ORM
-  - MongoDB with Mongoose
-  - Database migrations and seeding
-
-- 🔧 **Developer Experience**
-  - TypeScript support
-  - Hot reload with Nodemon
-  - ESLint and Prettier configuration
-  - Comprehensive error handling
-  - Structured logging
-
-## Tech Stack
-
-- **Backend**: Express.js, TypeScript
-- **Database**: PostgreSQL (Drizzle ORM), MongoDB (Mongoose)
-- **Authentication**: Passport.js, bcrypt
-- **Validation**: Zod
-- **Email**: Nodemailer, Handlebars
-- **Security**: Helmet, CORS, Rate Limiting, CSRF
-- **File Upload**: Multer, Cloudinary
-- **Build Tools**: tsup, ESLint, Prettier
+- TypeScript support with strict type checking
+- Drizzle ORM for type-safe database interactions
+- PostgreSQL integration (via `pg`)
+- Environment validation using `zod`
+- Structured folder conventions (controllers, services, routes, settings)
+- CSRF protection and secure defaults (Helmet, rate limiter, CORS)
+- Email sending with Handlebars templates
+- Built-in request logging and error handling
+- Seeders and migration scripts via Drizzle
+- ESLint and Prettier configured for code quality
 
 ## Prerequisites
 
-- Node.js >= 20.0.0
+- Node.js v20 or higher
+- pnpm v7 or higher (or npm/yarn)
 - PostgreSQL database
-- MongoDB database (optional)
-- PNPM package manager
 
-## Installation
+## Getting Started
 
-1. **Clone the repository**
+1. Clone the repository:
 
    ```bash
-   git clone https://github.com/tajbinkhan/express-authentication-v2.git
-   cd express-authentication-v2
+   git clone https://github.com/your-org/express-boilerplate.git
+   cd express-boilerplate
    ```
 
-2. **Install dependencies**
+2. Install dependencies:
 
    ```bash
    pnpm install
    ```
 
-3. **Environment Setup**
+3. Create a `.env` file in the project root and configure the following variables:
 
-   ```bash
-   cp .env.example .env
-   ```
+   ```dotenv
+   # Server settings
+   PORT=8080
+   NODE_ENV=development
+   SECRET=your-secret-session-key
+   SESSION_COOKIE_NAME=session
+   ORIGIN_URL=http://localhost:3000
+   API_URL=http://localhost:8080
 
-   Fill in your environment variables:
-
-   ```env
    # Database
-   DATABASE_URL=postgresql://username:password@localhost:5432/dbname
-   MONGODB_URI=mongodb://localhost:27017/your-db-name
+   DATABASE_URL=postgresql://user:password@localhost:5432/database_name
 
-   # Session
-   SESSION_SECRET=your-super-secret-session-key
+   # CSRF & Cookies
+   COOKIE_SETTINGS=locally
+   COOKIE_DOMAIN=localhost
+   COOKIE_SAME_SITE=lax
 
-   # Google OAuth
-   GOOGLE_CLIENT_ID=your-google-client-id
-   GOOGLE_CLIENT_SECRET=your-google-client-secret
-
-   # Email
+   # Email (SMTP)
    SMTP_HOST=smtp.example.com
    SMTP_PORT=587
-   SMTP_USER=your-email@example.com
-   SMTP_PASS=your-email-password
+   SMTP_USER=sender@example.com
+   SMTP_PASSWORD=email-password
 
-   # Cloudinary (for file uploads)
-   CLOUDINARY_CLOUD_NAME=your-cloud-name
-   CLOUDINARY_API_KEY=your-api-key
-   CLOUDINARY_API_SECRET=your-api-secret
+   # OAuth (Google)
+   GOOGLE_CLIENT_ID=your-google-client-id
+   GOOGLE_CLIENT_SECRET=your-google-client-secret
+   GOOGLE_CALLBACK_URL=http://localhost:8080/auth/google/callback
+
+   # Other
+   OTP_RESET_EXPIRY=300            # seconds
+   SHOW_OTP=false
    ```
 
-4. **Database Setup**
+4. Prepare the database schema and run migrations:
 
    ```bash
-   # Generate and run migrations
-   pnpm db:generate
-   pnpm db:migrate
-
-   # Seed the database
-   pnpm db:seed
+   pnpm run db:push       # Push schema to database
+   pnpm run db:generate   # Generate migration files
+   pnpm run db:migrate    # Apply migrations
    ```
 
-## Development
+5. (Optional) Seed the database:
+   ```bash
+   pnpm run db:seed       # Run default seeder
+   pnpm run db:seed:users # Seed users only
+   pnpm run db:seed:clear # Clear seeded data
+   ```
 
-```bash
-# Start development server with hot reload
-pnpm dev
+## Scripts
 
-# Build for production
-pnpm build
+- `pnpm run dev` — Start development server with auto-reload
+- `pnpm run build` — Type-check, lint, clean `dist/`, and bundle with `tsup`
+- `pnpm run start` — Run the compiled server
+- `pnpm run lint` — Lint source files with ESLint
+- `pnpm run format` — Format source files with Prettier
+- `pnpm run type-check`— Run TypeScript compiler in noEmit mode
 
-# Start production server
-pnpm start
+### Drizzle CLI
 
-# Run linting
-pnpm lint
-
-# Format code
-pnpm format
-
-# Type checking
-pnpm type-check
-```
-
-## Database Commands
-
-```bash
-# Database studio (GUI)
-pnpm db:studio
-
-# Generate migrations
-pnpm db:generate
-
-# Run migrations
-pnpm db:migrate
-
-# Push schema changes
-pnpm db:push
-
-# Clear database
-pnpm db:clear
-
-# Seed database
-pnpm db:seed
-
-# Reset database (clear + migrate + seed)
-pnpm db:reset
-```
-
-## API Endpoints
-
-### Authentication
-
-- `POST /auth/register` - User registration
-- `POST /auth/login` - User login
-- `POST /auth/logout` - User logout
-- `GET /auth/google` - Google OAuth login
-- `GET /auth/google/callback` - Google OAuth callback
-
-### User Management
-
-- `GET /users/profile` - Get user profile
-- `PUT /users/profile` - Update user profile
-- `POST /users/change-password` - Change password
-
-### Email Services
-
-- `POST /email/verify` - Send verification email
-- `POST /email/forgot-password` - Send password reset email
-- `POST /email/reset-password` - Reset password
+- `pnpm run db:studio` — Launch Drizzle Studio GUI
+- `pnpm run db:clear` — Clean database and drop all tables
+- `pnpm run db:reset` — Clear, migrate, then seed
 
 ## Project Structure
 
 ```
-src/
-├── app/                    # Feature modules
-│   ├── authentication/    # Auth controllers, services, routes
-│   ├── email/             # Email functionality
-│   ├── emailTemplate/     # Email template services
-│   └── user/              # User management
-├── core/                  # Core utilities and constants
-├── databases/             # Database configurations and helpers
-├── mailer/                # Email configuration and services
-├── middlewares/           # Custom middleware
-├── models/                # Database models
-├── passport/              # Passport strategies
-├── routes/                # Route configurations
-├── seed/                  # Database seeders
-├── service/               # Business logic services
-├── settings/              # App configuration
-├── utils/                 # Utility functions
-└── validators/            # Input validation schemas
+├── src
+│   ├── app.ts               # Express application setup
+│   ├── server.ts            # Entry point
+│   ├── app/                 # Feature folders (email, templates, etc.)
+│   ├── core/                # Constants, environment loader, messages
+│   ├── databases/drizzle/   # Drizzle connection and helpers
+│   ├── mailer/              # Mailer config and schema
+│   ├── models/drizzle/      # Drizzle table schemas
+│   ├── routes/              # API routes configuration
+│   ├── settings/            # Middleware and logger setup
+│   ├── utils/               # Helper functions (CSRF, sorting, domain store)
+│   └── validators/          # Zod validation schemas
+└── drizzle.config.ts        # DrizzleKit configuration
 ```
-
-## Security Features
-
-- **CSRF Protection**: Double submit cookie pattern
-- **Rate Limiting**: Configurable rate limits per endpoint
-- **Input Validation**: Zod schema validation
-- **SQL Injection Prevention**: Parameterized queries with Drizzle ORM
-- **XSS Protection**: Helmet security headers
-- **Session Security**: Secure session configuration
-- **Password Security**: bcrypt hashing with salt rounds
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-### Development Guidelines
-
-- Follow TypeScript best practices
-- Write tests for new features
-- Follow the existing code style (ESLint/Prettier)
-- Update documentation as needed
-- Ensure all tests pass before submitting PR
-
-## Testing
-
-```bash
-# Run tests (when implemented)
-pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Run tests with coverage
-pnpm test:coverage
-```
-
-## Deployment
-
-### Using Vercel
-
-1. Install Vercel CLI: `npm i -g vercel`
-2. Run: `vercel`
-3. Follow the deployment prompts
-
-### Using Docker
-
-```bash
-# Build Docker image
-docker build -t express-auth-v2 .
-
-# Run container
-docker run -p 3000:3000 express-auth-v2
-```
-
-### Environment Variables for Production
-
-Make sure to set all required environment variables in your production environment:
-
-- `NODE_ENV=production`
-- `DATABASE_URL`
-- `SESSION_SECRET`
-- `GOOGLE_CLIENT_ID`
-- `GOOGLE_CLIENT_SECRET`
-- Email configuration variables
-- Cloudinary configuration variables
-
-## Troubleshooting
-
-### Common Issues
-
-1. **Database Connection Issues**
-   - Verify your `DATABASE_URL` is correct
-   - Ensure PostgreSQL is running
-   - Check firewall settings
-
-2. **OAuth Issues**
-   - Verify Google OAuth credentials
-   - Check redirect URIs in Google Console
-   - Ensure correct domain configuration
-
-3. **Email Issues**
-   - Verify SMTP configuration
-   - Check email provider settings
-   - Ensure firewall allows SMTP connections
-
-## Performance
-
-- Database connection pooling
-- Session store optimization
-- Rate limiting to prevent abuse
-- Efficient query patterns with Drizzle ORM
-- Optimized middleware ordering
-
-## Monitoring and Logging
-
-- Structured logging with custom logger
-- Request/response logging
-- Error tracking and reporting
-- Performance monitoring capabilities
+Contributions are welcome! Please open an issue or submit a pull request for improvements.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- [Express.js](https://expressjs.com/) - Fast, unopinionated, minimalist web framework
-- [Passport.js](http://www.passportjs.org/) - Simple, unobtrusive authentication
-- [Drizzle ORM](https://orm.drizzle.team/) - TypeScript ORM for SQL databases
-- [Zod](https://zod.dev/) - TypeScript-first schema validation
-
-## Support
-
-If you encounter any issues or have questions, please:
-
-1. Check the [documentation](docs/)
-2. Search existing [issues](https://github.com/tajbinkhan/express-authentication-v2/issues)
-3. Create a new issue if needed
-
----
-
-**Made with ❤️ by [Tajbin Khan](https://github.com/tajbinkhan)**
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.

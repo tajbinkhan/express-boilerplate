@@ -1,7 +1,7 @@
 {
-	"name": "express-auth-v2",
+	"name": "express-boilerplate",
 	"version": "1.0.0",
-	"description": "Express Authentication API with advanced features",
+	"description": "Express boilerplate with TypeScript, Drizzle ORM, and PostgreSQL",
 	"main": "dist/server.mjs",
 	"scripts": {
 		"prebuild": "node update‑schema.mjs",
