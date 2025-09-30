@@ -1,12 +1,7 @@
 import pc from "picocolors";
 import { z } from "zod";
 
-import {
-	validateBoolean,
-	validateEnum,
-	validateEnvNumber,
-	validateString
-} from "@/validators/commonRules";
+import { validateEnum, validateEnvNumber, validateString } from "@/validators/commonRules";
 
 const smtpEnvSchema = z.object({
 	SMTP_HOST: validateString("SMTP_HOST"),
@@ -15,16 +10,8 @@ const smtpEnvSchema = z.object({
 	SMTP_PASSWORD: validateString("SMTP_PASSWORD")
 });
 
-export const googleEnvSchema = z.object({
-	GOOGLE_CLIENT_ID: validateString("GOOGLE_CLIENT_ID"),
-	GOOGLE_CLIENT_SECRET: validateString("GOOGLE_CLIENT_SECRET"),
-	GOOGLE_CALLBACK_URL: validateString("GOOGLE_CALLBACK_URL")
-});
-
 export const cookieSchema = z.object({
-	COOKIE_SETTINGS: validateEnum("COOKIE_SETTINGS", ["locally", "globally"]),
-	COOKIE_DOMAIN: validateString("COOKIE_DOMAIN"),
-	COOKIE_SAME_SITE: validateEnum("COOKIE_SAME_SITE", ["lax", "strict", "none"])
+	COOKIE_DOMAIN: validateString("COOKIE_DOMAIN")
 });
 
 export const envSchema = z.object({
@@ -32,16 +19,10 @@ export const envSchema = z.object({
 	PORT: validateEnvNumber("PORT", { min: 1, int: true }),
 	SECRET: validateString("SECRET"),
 	NODE_ENV: validateEnum("NODE_ENV", ["development", "production"]),
-	SESSION_COOKIE_NAME: validateString("SESSION_COOKIE_NAME"),
 	ORIGIN_URL: validateString("ORIGIN_URL"),
-	OTP_RESET_EXPIRY: validateEnvNumber("OTP_RESET_EXPIRY", { min: 1, int: true }),
-	SHOW_OTP: validateString("SHOW_OTP").refine(value =>
-		validateBoolean(value) ? true : "SHOW_OTP must be a boolean value (true or false)"
-	),
 	API_URL: validateString("API_URL"),
 	...cookieSchema.shape,
-	...smtpEnvSchema.shape,
-	...googleEnvSchema.shape
+	...smtpEnvSchema.shape
 });
 
 const Env = envSchema.safeParse(process.env);
