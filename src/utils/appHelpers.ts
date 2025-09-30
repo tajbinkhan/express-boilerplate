@@ -1,6 +1,9 @@
+import dotenv from "dotenv";
 import type { CookieOptions } from "express";
 
 import { blackListDomains } from "@/core/constants";
+
+dotenv.config();
 
 interface SameSiteCookieConfig {
 	sameSite: CookieOptions["sameSite"];
